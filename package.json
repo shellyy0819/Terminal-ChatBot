@@ -19,6 +19,7 @@
 		"@google/generative-ai": "^0.24.1",
 		"ai": "^4.3.16",
 		"dotenv": "^16.5.0",
+		"fs-extra": "^11.3.0",
 		"ink": "^4.1.0",
 		"ink-text-input": "^5.0.1",
 		"meow": "^11.0.0",
@@ -26,6 +27,8 @@
 	},
 	"devDependencies": {
 		"@sindresorhus/tsconfig": "^3.0.1",
+		"@types/fs-extra": "^11.0.4",
+		"@types/node": "^24.0.1",
 		"@types/react": "^18.0.32",
 		"@vdemedes/prettier-config": "^2.0.1",
 		"ava": "^5.2.0",
@@ -35,7 +38,7 @@
 		"eslint-plugin-react-hooks": "^4.6.0",
 		"ink-testing-library": "^3.0.0",
 		"prettier": "^2.8.7",
-		"ts-node": "^10.9.1",
+		"ts-node": "^10.9.2",
 		"typescript": "^5.8.3",
 		"xo": "^0.53.1"
 	},
