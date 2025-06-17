@@ -1,0 +1,6 @@
+[
+  { "role": "user", "parts": "What is React?" },
+  { "role": "model", "parts": "React is a JS library for UI..." },
+  { "role": "user", "parts": "What is JSX?" },
+  { "role": "model", "parts": "JSX is a syntax extension..." }
+]

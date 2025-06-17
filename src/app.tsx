@@ -1,9 +1,9 @@
 import process from 'node:process';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Box, Text, useInput, useApp} from 'ink';
 import TextInput from 'ink-text-input';
 
-import {generateResponse} from './ai.js';
+import {generateResponse, getCodeFromFile, parseArgs} from './ai.js';
 
 type Message = {
 	id: number;
@@ -12,9 +12,46 @@ type Message = {
 };
 
 export default function App() {
+	const options = parseArgs(process.argv);
+
 	const {exit} = useApp();
 	const [messages, setMessages] = useState<Message[]>([]);
 	const [input, setInput] = useState('');
+	const [loading, setLoading] = useState(false);
+
+	useEffect(() => {
+    if (options.mode === "file") {
+      const content = getCodeFromFile(options.filePath);
+      runReview(content);
+    } else if (options.mode === "diff") {
+      runReview(options.diff);
+    }
+  }, []);
+
+  const runReview = async (value: any) => {
+    if (value.trim()) {
+			const newUserMessage: Message = {
+				id: messages.length + 1,
+				type: 'user',
+				content: value,
+			};
+			setMessages(prev => [...prev, newUserMessage]);
+			setInput('');
+setLoading(true);
+			try {
+				const response = await generateResponse(value);
+				const assistantMessage: Message = {
+					id: messages.length + 2,
+					type: 'assistant',
+					content: response,
+				};
+				setLoading(false);
+				setMessages(prev => [...prev, assistantMessage]);
+			} catch (error) {
+				console.error('Error:', error);
+			}
+		}
+  };
 
 	useInput((_, key) => {
 		if (key.escape) {
@@ -23,27 +60,7 @@ export default function App() {
 	});
 
 	const handleSubmit = async (value: string) => {
-		if (value.trim()) {
-			const newUserMessage: Message = {
-				id: messages.length + 1,
-				type: 'user',
-				content: value,
-			};
-			setMessages(prev => [...prev, newUserMessage]);
-			setInput('');
-
-			try {
-				const response = await generateResponse(value);
-				const assistantMessage: Message = {
-					id: messages.length + 2,
-					type: 'assistant',
-					content: response,
-				};
-				setMessages(prev => [...prev, assistantMessage]);
-			} catch (error) {
-				console.error('Error:', error);
-			}
-		}
+		await runReview(value);
 	};
 
 	return (
@@ -62,14 +79,14 @@ export default function App() {
 				</Box>
 			</Box>
 			<Box padding={1}>
-				<Text dimColor>What do you want to build today?</Text>
+				<Text dimColor>What do you want to build today?..</Text>
 			</Box>
 			<Box flexDirection="column" flexGrow={1} paddingLeft={1} paddingTop={1}>
 				{messages.map(message => (
 					<Box key={message.id} marginBottom={1}>
 						{message.type === 'assistant' ? (
 							<Text>
-								<Text color="yellow">❯ 🤖</Text> {message.content}
+								<Text color="yellow">❯ 🤖</Text> <pre>{message.content}</pre>
 							</Text>
 						) : (
 							<Text dimColor>
@@ -78,6 +95,7 @@ export default function App() {
 						)}
 					</Box>
 				))}
+				{loading && <Text color="yellow">🧠 Reviewing with Gemini...</Text>}
 			</Box>
 
 			<Box borderStyle="round" borderColor="gray" paddingLeft={1}>
