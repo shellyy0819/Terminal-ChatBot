@@ -1,15 +1,1 @@
-{
-"name": "vonage-sms-poc",
-"version": "1.0.0",
-"type": "module",
-"scripts": {
-"start": "node src/server.js",
-"send": "node src/sendSms.js"
-},
-"dependencies": {
-"@vonage/server-sdk": "^3.7.0",
-"express": "^4.18.2",
-"body-parser": "^1.20.2",
-"dotenv": "^16.4.0"
-}
-}
+{"name":"vonage-sms-poc","version":"1.0.0","type":"module","scripts":{"start":"node src/server.js","dev": "concurrently \"npm start\" \"ngrok http 3000\"","send":"node src/sendSms.js","call":"node src/call.js"},"dependencies":{"@vonage/server-sdk":"^3.7.0","body-parser":"^1.20.4","dotenv":"^16.4.0","express":"^4.22.1"},"devDependencies":{"concurrently":"^9.2.1"}}
