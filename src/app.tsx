@@ -3,7 +3,7 @@ import React, {useState} from 'react';
 import {Box, Text, useInput, useApp} from 'ink';
 import TextInput from 'ink-text-input';
 
-import {generateResponse} from './ai.js';
+import {commands, generateResponse} from './ai.js';
 
 type Message = {
 	id: number;
@@ -23,28 +23,55 @@ export default function App() {
 	});
 
 	const handleSubmit = async (value: string) => {
-		if (value.trim()) {
-			const newUserMessage: Message = {
-				id: messages.length + 1,
-				type: 'user',
-				content: value,
-			};
-			setMessages(prev => [...prev, newUserMessage]);
-			setInput('');
+		console.log("value",value)
+    if (value.trim()) {
+        const isCommand = value.startsWith('/');
+        if (isCommand) {
+			const cmdName = value.slice(1).split(' ')[0] ?? '';
+			const cmdArgs = value.slice(cmdName.length + 2);
+			const command = cmdName ? commands[cmdName as keyof typeof commands] : undefined;
+            if (command) {
+				console.log("command",command)
+                const result = await Promise.resolve(command.action(cmdArgs));
+                const assistantMessage: Message = {
+                    id: messages.length + 1,
+                    type: 'assistant',
+                    content: result,
+                };
+                setMessages(prev => [...prev, assistantMessage]);
+            } else {
+                const assistantMessage: Message = {
+                    id: messages.length + 1,
+                    type: 'assistant',
+                    content: `Unknown command: ${cmdName}`,
+                };
+                setMessages(prev => [...prev, assistantMessage]);
+            }
+            setInput('');
+            return;
+        }
 
-			try {
-				const response = await generateResponse(value);
-				const assistantMessage: Message = {
-					id: messages.length + 2,
-					type: 'assistant',
-					content: response,
-				};
-				setMessages(prev => [...prev, assistantMessage]);
-			} catch (error) {
-				console.error('Error:', error);
-			}
-		}
-	};
+        const newUserMessage: Message = {
+            id: messages.length + 1,
+            type: 'user',
+            content: value,
+        };
+        setMessages(prev => [...prev, newUserMessage]);
+        setInput('');
+
+        try {
+            const response = await generateResponse(value);
+            const assistantMessage: Message = {
+                id: messages.length + 2,
+                type: 'assistant',
+                content: response,
+            };
+            setMessages(prev => [...prev, assistantMessage]);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+};
 
 	return (
 		<Box flexDirection="column" height="100%">

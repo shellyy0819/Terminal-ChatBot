@@ -17,15 +17,19 @@
 	"dependencies": {
 		"@ai-sdk/anthropic": "^1.2.12",
 		"@google/generative-ai": "^0.24.1",
+		"@inquirer/prompts": "^7.6.0",
 		"ai": "^4.3.16",
 		"dotenv": "^16.5.0",
 		"ink": "^4.1.0",
 		"ink-text-input": "^5.0.1",
+		"inquirer": "^12.7.0",
 		"meow": "^11.0.0",
+		"openai": "^5.8.2",
 		"react": "^18.2.0"
 	},
 	"devDependencies": {
 		"@sindresorhus/tsconfig": "^3.0.1",
+		"@types/node": "^24.0.10",
 		"@types/react": "^18.0.32",
 		"@vdemedes/prettier-config": "^2.0.1",
 		"ava": "^5.2.0",
